@@ -1,8 +1,11 @@
 import { Redirect } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
-import { Botao, Campo, Erro, Tela, Texto, Titulo } from '@/components/ui';
+import { Botao, Campo, Erro, Tela, cores } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
+import { marca } from '@/lib/marca';
 import { supabase } from '@/lib/supabase';
 
 export default function Login() {
@@ -38,37 +41,58 @@ export default function Login() {
   }
 
   return (
-    <Tela>
-      <Titulo>Pastoreio</Titulo>
-      <Texto suave>O dia a dia do pastor distrital em um só lugar.</Texto>
-      {cadastro && (
-        <>
-          <Campo rotulo="Nome" value={nome} onChangeText={setNome} />
-          <Campo
-            rotulo="Código da Associação"
-            value={codigo}
-            onChangeText={setCodigo}
-            autoCapitalize="characters"
-            placeholder="Fornecido pela sua Associação"
-          />
-        </>
-      )}
-      <Campo
-        rotulo="E-mail"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <Campo rotulo="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
-      {erro && <Erro>{erro}</Erro>}
-      {aviso && <Texto>{aviso}</Texto>}
-      <Botao titulo={cadastro ? 'Criar conta' : 'Entrar'} onPress={entrar} ocupado={ocupado} />
-      <Botao
-        secundario
-        titulo={cadastro ? 'Já tenho conta' : 'Criar uma conta'}
-        onPress={() => setCadastro(!cadastro)}
-      />
-    </Tela>
+    <LinearGradient colors={[cores.marinhoClaro, cores.marinho, '#081A30']} style={{ flex: 1 }}>
+      <Tela escura>
+        <View style={estilos.marca}>
+          <Image source={require('../../assets/logo.png')} style={estilos.logo} />
+          <Text style={estilos.nome}>
+            {marca.nome} <Text style={{ color: cores.dourado }}>{marca.destaque}</Text>
+          </Text>
+          <Text style={estilos.lema}>{marca.lema}</Text>
+          <Text style={estilos.chamada}>{marca.chamada}</Text>
+        </View>
+
+        {cadastro && (
+          <>
+            <Campo escuro rotulo="Nome" value={nome} onChangeText={setNome} />
+            <Campo
+              escuro
+              rotulo="Código da Associação"
+              value={codigo}
+              onChangeText={setCodigo}
+              autoCapitalize="characters"
+              placeholder="Fornecido pela sua Associação"
+            />
+          </>
+        )}
+        <Campo
+          escuro
+          rotulo="E-mail"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+        <Campo escuro rotulo="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
+        {erro && <Erro>{erro}</Erro>}
+        {aviso && <Text style={{ color: '#fff' }}>{aviso}</Text>}
+        <Botao variante="dourado" titulo={cadastro ? 'Criar conta' : 'Entrar'} onPress={entrar} ocupado={ocupado} />
+        <Botao
+          variante="claro"
+          titulo={cadastro ? 'Já tenho conta' : 'Criar uma conta'}
+          onPress={() => setCadastro(!cadastro)}
+        />
+        <Text style={estilos.rodape}>{marca.rodape}</Text>
+      </Tela>
+    </LinearGradient>
   );
 }
+
+const estilos = StyleSheet.create({
+  marca: { alignItems: 'center', marginTop: 56, marginBottom: 24, gap: 6 },
+  logo: { width: 120, height: 120 },
+  nome: { color: '#fff', fontSize: 36, fontWeight: '700' },
+  lema: { color: '#C9D3E0', fontSize: 11, letterSpacing: 1.5 },
+  chamada: { color: '#fff', fontSize: 17, textAlign: 'center', marginTop: 20, lineHeight: 24 },
+  rodape: { color: '#C9D3E0', textAlign: 'center', fontSize: 13, marginTop: 8 },
+});

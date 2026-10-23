@@ -12,16 +12,17 @@ export default function AppLayout() {
   return (
     <Stack
       screenOptions={{
-        headerTintColor: cores.primaria,
+        headerStyle: { backgroundColor: cores.marinho },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: '700' },
         contentStyle: { backgroundColor: cores.fundo },
         headerBackButtonDisplayMode: 'minimal',
       }}
     >
-      <Stack.Screen name="index" options={{ title: 'Início' }} />
-      <Stack.Screen name="distritos" options={{ title: 'Distritos' }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="pastores" options={{ title: 'Pastores' }} />
-      <Stack.Screen name="igrejas/index" options={{ title: 'Igrejas' }} />
-      <Stack.Screen name="igrejas/[id]" options={{ title: 'Igreja' }} />
+      <Stack.Screen name="distrito/[id]" options={{ title: 'Distrito' }} />
+      <Stack.Screen name="igreja/[id]" options={{ title: 'Igreja' }} />
     </Stack>
   );
 }

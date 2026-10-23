@@ -64,7 +64,7 @@ export default function EditarIgreja() {
             onPress={() => setForm({ ...form, tipo: t })}
             style={[estilos.tipo, form.tipo === t && estilos.tipoAtivo]}
           >
-            <Text style={{ color: form.tipo === t ? '#fff' : cores.primaria }}>
+            <Text style={{ color: form.tipo === t ? '#fff' : cores.marinho }}>
               {t === 'igreja' ? 'Igreja' : 'Grupo'}
             </Text>
           </Pressable>
@@ -76,7 +76,7 @@ export default function EditarIgreja() {
       <Campo rotulo="Telefone" keyboardType="phone-pad" {...campo('telefone')} />
       {erro && <Erro>{erro}</Erro>}
       <Botao titulo="Salvar" onPress={salvar} ocupado={ocupado} />
-      {!nova && <Botao secundario titulo="Excluir" onPress={excluir} ocupado={ocupado} />}
+      {!nova && <Botao variante="contorno" titulo="Excluir" onPress={excluir} ocupado={ocupado} />}
     </Tela>
   );
 }
@@ -87,9 +87,9 @@ const estilos = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: cores.primaria,
+    borderColor: cores.marinho,
     borderRadius: 10,
     paddingVertical: 10,
   },
-  tipoAtivo: { backgroundColor: cores.primaria },
+  tipoAtivo: { backgroundColor: cores.marinho },
 });

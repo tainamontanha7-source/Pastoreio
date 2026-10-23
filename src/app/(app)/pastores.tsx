@@ -55,7 +55,7 @@ export default function Pastores() {
                   onPress={() => definirDistrito(p, d.id)}
                   style={[estilos.opcao, ativo && estilos.opcaoAtiva]}
                 >
-                  <Text style={{ color: ativo ? '#fff' : cores.primaria }}>{d.nome}</Text>
+                  <Text style={{ color: ativo ? '#fff' : cores.marinho }}>{d.nome}</Text>
                 </Pressable>
               );
             })}
@@ -70,10 +70,10 @@ const estilos = StyleSheet.create({
   opcoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 },
   opcao: {
     borderWidth: 1,
-    borderColor: cores.primaria,
+    borderColor: cores.marinho,
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  opcaoAtiva: { backgroundColor: cores.primaria },
+  opcaoAtiva: { backgroundColor: cores.marinho },
 });
