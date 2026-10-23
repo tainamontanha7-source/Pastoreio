@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Botao, Campo, Erro, Tela, cores } from '@/components/ui';
-import { supabase } from '@/lib/supabase';
+import { igrejasDemo } from '@/dados/ficticios';
+import { modoDemo, supabase } from '@/lib/supabase';
 import type { Igreja } from '@/lib/tipos';
 
 type Formulario = Omit<Igreja, 'id' | 'distrito_id'>;
@@ -19,6 +20,11 @@ export default function EditarIgreja() {
 
   useEffect(() => {
     if (nova) return;
+    if (modoDemo) {
+      const igreja = igrejasDemo.find((i) => i.id === id);
+      if (igreja) setForm(igreja);
+      return;
+    }
     supabase
       .from('igrejas')
       .select('nome, tipo, endereco, cidade, anciao, telefone')
@@ -36,6 +42,7 @@ export default function EditarIgreja() {
 
   async function salvar() {
     if (!form.nome.trim()) return setErro('Informe o nome da igreja.');
+    if (modoDemo) return setErro('Modo demonstração: as alterações não são salvas.');
     setOcupado(true);
     const { error } = nova
       ? await supabase.from('igrejas').insert({ ...form, distrito_id: distrito })
@@ -46,6 +53,7 @@ export default function EditarIgreja() {
   }
 
   async function excluir() {
+    if (modoDemo) return setErro('Modo demonstração: as alterações não são salvas.');
     setOcupado(true);
     const { error } = await supabase.from('igrejas').delete().eq('id', id);
     setOcupado(false);

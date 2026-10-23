@@ -4,8 +4,9 @@ import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 
 import { Botao, Campo, Cartao, Erro, Texto, cores } from '@/components/ui';
+import { igrejasDemo } from '@/dados/ficticios';
 import { useAuth } from '@/lib/auth';
-import { supabase } from '@/lib/supabase';
+import { modoDemo, supabase } from '@/lib/supabase';
 import type { Distrito, Igreja } from '@/lib/tipos';
 
 function Linha({ titulo, detalhe, icone }: { titulo: string; detalhe?: string; icone: keyof typeof Ionicons.glyphMap }) {
@@ -26,6 +27,7 @@ export function ListaIgrejas({ distritoId }: { distritoId: string }) {
 
   useFocusEffect(
     useCallback(() => {
+      if (modoDemo) return setIgrejas(igrejasDemo);
       supabase
         .from('igrejas')
         .select('id, distrito_id, nome, tipo, endereco, cidade, anciao, telefone')

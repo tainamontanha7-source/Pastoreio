@@ -4,10 +4,9 @@ import { View } from 'react-native';
 
 import { Botao, Cartao, Tela, Texto, cores } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
-import { supabase } from '@/lib/supabase';
 
 export default function Mais() {
-  const { perfil, sessao } = useAuth();
+  const { perfil, sessao, sair } = useAuth();
 
   return (
     <Tela>
@@ -28,7 +27,7 @@ export default function Mais() {
           </View>
         </Cartao>
       )}
-      <Botao variante="contorno" titulo="Sair" onPress={() => supabase.auth.signOut()} />
+      <Botao variante="contorno" titulo="Sair" onPress={sair} />
     </Tela>
   );
 }

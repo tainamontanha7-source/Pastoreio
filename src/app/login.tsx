@@ -1,15 +1,19 @@
 import { Redirect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Botao, Campo, Erro, Tela, cores } from '@/components/ui';
+import { Paisagem } from '@/components/paisagem';
+import { Botao, Campo, Erro } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { marca } from '@/lib/marca';
 import { supabase } from '@/lib/supabase';
+import { cores, espaco } from '@/theme';
 
 export default function Login() {
-  const { sessao } = useAuth();
+  const { sessao, modoDemo, entrarDemo } = useAuth();
+  const topo = useSafeAreaInsets().top;
   const [cadastro, setCadastro] = useState(false);
   const [nome, setNome] = useState('');
   const [codigo, setCodigo] = useState('');
@@ -22,6 +26,7 @@ export default function Login() {
   if (sessao) return <Redirect href="/" />;
 
   async function entrar() {
+    if (modoDemo) return entrarDemo();
     setErro(null);
     setAviso(null);
     setOcupado(true);
@@ -41,18 +46,26 @@ export default function Login() {
   }
 
   return (
-    <LinearGradient colors={[cores.marinhoClaro, cores.marinho, '#081A30']} style={{ flex: 1 }}>
-      <Tela escura>
-        <View style={estilos.marca}>
+    <ScrollView style={{ backgroundColor: cores.marinhoProfundo }} contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={[estilos.capa, modoDemo && { flex: 1 }]}>
+        <Paisagem estrada />
+        <LinearGradient
+          colors={['transparent', 'rgba(8,26,48,0.55)', cores.marinhoProfundo]}
+          locations={[0.45, 0.75, 1]}
+          style={StyleSheet.absoluteFill}
+        />
+        <View style={[estilos.marca, { paddingTop: topo + 48 }]}>
           <Image source={require('../../assets/logo.png')} style={estilos.logo} />
           <Text style={estilos.nome}>
             {marca.nome} <Text style={{ color: cores.dourado }}>{marca.destaque}</Text>
           </Text>
           <Text style={estilos.lema}>{marca.lema}</Text>
-          <Text style={estilos.chamada}>{marca.chamada}</Text>
         </View>
+        <Text style={estilos.chamada}>{marca.chamada}</Text>
+      </View>
 
-        {cadastro && (
+      <View style={estilos.formulario}>
+        {!modoDemo && cadastro && (
           <>
             <Campo escuro rotulo="Nome" value={nome} onChangeText={setNome} />
             <Campo
@@ -65,34 +78,53 @@ export default function Login() {
             />
           </>
         )}
-        <Campo
-          escuro
-          rotulo="E-mail"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-        <Campo escuro rotulo="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
+        {!modoDemo && (
+          <>
+            <Campo
+              escuro
+              rotulo="E-mail"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+            <Campo escuro rotulo="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
+          </>
+        )}
         {erro && <Erro>{erro}</Erro>}
         {aviso && <Text style={{ color: '#fff' }}>{aviso}</Text>}
         <Botao variante="dourado" titulo={cadastro ? 'Criar conta' : 'Entrar'} onPress={entrar} ocupado={ocupado} />
-        <Botao
-          variante="claro"
-          titulo={cadastro ? 'Já tenho conta' : 'Criar uma conta'}
-          onPress={() => setCadastro(!cadastro)}
-        />
+        {modoDemo ? (
+          <Text style={estilos.demo}>Modo demonstração, com dados fictícios</Text>
+        ) : (
+          <Botao
+            variante="claro"
+            titulo={cadastro ? 'Já tenho conta' : 'Criar uma conta'}
+            onPress={() => setCadastro(!cadastro)}
+          />
+        )}
         <Text style={estilos.rodape}>{marca.rodape}</Text>
-      </Tela>
-    </LinearGradient>
+      </View>
+    </ScrollView>
   );
 }
 
 const estilos = StyleSheet.create({
-  marca: { alignItems: 'center', marginTop: 56, marginBottom: 24, gap: 6 },
-  logo: { width: 120, height: 120 },
-  nome: { color: '#fff', fontSize: 36, fontWeight: '700' },
-  lema: { color: '#C9D3E0', fontSize: 11, letterSpacing: 1.5 },
-  chamada: { color: '#fff', fontSize: 17, textAlign: 'center', marginTop: 20, lineHeight: 24 },
-  rodape: { color: '#C9D3E0', textAlign: 'center', fontSize: 13, marginTop: 8 },
+  capa: { minHeight: 460, justifyContent: 'space-between' },
+  marca: { alignItems: 'center', gap: 6 },
+  logo: { width: 96, height: 96 },
+  nome: { color: '#fff', fontSize: 34, fontWeight: '700' },
+  lema: { color: cores.textoSobreEscuro, fontSize: 10, letterSpacing: 1.5 },
+  chamada: {
+    color: '#fff',
+    fontSize: 22,
+    lineHeight: 30,
+    paddingHorizontal: espaco.xl,
+    paddingBottom: espaco.lg,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowRadius: 8,
+  },
+  formulario: { paddingHorizontal: espaco.xl, paddingBottom: espaco.xxl, gap: espaco.md },
+  demo: { color: cores.textoSobreEscuro, textAlign: 'center', fontSize: 12 },
+  rodape: { color: cores.textoSobreEscuro, textAlign: 'center', fontSize: 13, marginTop: espaco.sm },
 });

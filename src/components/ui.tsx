@@ -10,22 +10,9 @@ import {
   type TextInputProps,
 } from 'react-native';
 
-// Identidade visual Pastor One: azul-marinho e dourado
-export const cores = {
-  marinho: '#0F2A4A',
-  marinhoClaro: '#1B3D66',
-  dourado: '#D6AE74',
-  douradoEscuro: '#B88D4F',
-  fundo: '#F4F6FA',
-  cartao: '#FFFFFF',
-  texto: '#14213D',
-  suave: '#6B7687',
-  borda: '#E3E7EE',
-  erro: '#B3261E',
-  verde: '#2E9D6A',
-  azul: '#2F7BD8',
-  laranja: '#E7843A',
-};
+import { cores, sombra } from '@/theme';
+
+export { cores };
 
 export function Tela({ children, escura }: { children: ReactNode; escura?: boolean }) {
   return (
@@ -134,11 +121,7 @@ const estilos = StyleSheet.create({
     borderRadius: 14,
     padding: 16,
     gap: 4,
-    shadowColor: '#0F2A4A',
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    ...sombra,
   },
   botao: { borderRadius: 14, paddingVertical: 15, alignItems: 'center' },
   botaoTexto: { fontSize: 16, fontWeight: '700' },

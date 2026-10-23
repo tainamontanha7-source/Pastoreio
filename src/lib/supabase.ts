@@ -6,21 +6,20 @@ import { AppState, Platform } from 'react-native';
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const chave = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!url || !chave) {
-  throw new Error('Defina EXPO_PUBLIC_SUPABASE_URL e EXPO_PUBLIC_SUPABASE_ANON_KEY no arquivo .env');
-}
+// Sem o .env configurado, o app abre em modo demonstração, com dados fictícios
+export const modoDemo = !url || !chave;
 
-export const supabase = createClient(url, chave, {
+export const supabase = createClient(url || 'https://demo.invalid', chave || 'demo', {
   auth: {
     storage: AsyncStorage,
-    autoRefreshToken: true,
-    persistSession: true,
+    autoRefreshToken: !modoDemo,
+    persistSession: !modoDemo,
     detectSessionInUrl: false,
   },
 });
 
 // Renova o token só com o app em primeiro plano, como recomenda o Supabase para React Native
-if (Platform.OS !== 'web') {
+if (Platform.OS !== 'web' && !modoDemo) {
   AppState.addEventListener('change', (estado) => {
     if (estado === 'active') supabase.auth.startAutoRefresh();
     else supabase.auth.stopAutoRefresh();

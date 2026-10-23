@@ -1,20 +1,27 @@
 import type { Session } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
-import { supabase } from './supabase';
+import { perfilDemo } from '@/dados/ficticios';
+
+import { modoDemo, supabase } from './supabase';
 import type { Perfil } from './tipos';
 
 type Auth = {
   carregando: boolean;
   sessao: Session | null;
   perfil: Perfil | null;
+  modoDemo: boolean;
+  entrarDemo: () => void;
+  sair: () => Promise<void>;
   recarregarPerfil: () => Promise<void>;
 };
 
 const AuthContext = createContext<Auth | null>(null);
 
+const sessaoDemo = { user: { id: 'demo', email: 'pastor@exemplo.com' } } as Session;
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [carregando, setCarregando] = useState(true);
+  const [carregando, setCarregando] = useState(!modoDemo);
   const [sessao, setSessao] = useState<Session | null>(null);
   const [perfil, setPerfil] = useState<Perfil | null>(null);
 
@@ -32,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (modoDemo) return;
     supabase.auth.getSession().then(async ({ data }) => {
       setSessao(data.session);
       await buscarPerfil(data.session);
@@ -44,10 +52,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, [buscarPerfil]);
 
-  const recarregarPerfil = useCallback(() => buscarPerfil(sessao), [buscarPerfil, sessao]);
+  const entrarDemo = useCallback(() => {
+    setSessao(sessaoDemo);
+    setPerfil(perfilDemo);
+  }, []);
+
+  const sair = useCallback(async () => {
+    if (modoDemo) {
+      setSessao(null);
+      setPerfil(null);
+    } else {
+      await supabase.auth.signOut();
+    }
+  }, []);
+
+  const recarregarPerfil = useCallback(
+    () => (modoDemo ? Promise.resolve() : buscarPerfil(sessao)),
+    [buscarPerfil, sessao],
+  );
 
   return (
-    <AuthContext.Provider value={{ carregando, sessao, perfil, recarregarPerfil }}>
+    <AuthContext.Provider value={{ carregando, sessao, perfil, modoDemo, entrarDemo, sair, recarregarPerfil }}>
       {children}
     </AuthContext.Provider>
   );
